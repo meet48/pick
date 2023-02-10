@@ -160,10 +160,10 @@ contract Exchange is Ownable , Pausable {
     /**
      * @dev Returns the number of meet exchanged for pick.
      */
-    function getPickAmount(uint256 MeetAmount) public view returns (uint256) {
+    function getPickAmount(uint256 meetAmount) public view returns (uint256) {
         uint256 ethPrice = uint256(getEthPrice());
         uint256 meetPrice = uint256(getMeetPrice());
-        uint256 total = MeetAmount * meetPrice * ethPrice / (10 ** 36);
+        uint256 total = meetAmount * meetPrice * ethPrice / (10 ** 36);
         return total;
     }
 
