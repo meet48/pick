@@ -25,7 +25,14 @@ describe("Pick", function () {
     });
 
 
+    it("mintTo" , async function(){
+        const [account1 , account2] = await ethers.getSigners();
+        await pick.setMinter(account1.address);
+        let mintNum = 100;
+        await pick.mintTo(account2.address , mintNum);
+        expect(await pick.balanceOf(account2.address).then((ret) => {return ret})).to.equal(mintNum);
+    });
+
 
 });
-
 
