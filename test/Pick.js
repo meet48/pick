@@ -17,13 +17,11 @@ describe("Pick", function () {
         pick = contracts.pick;
     } , 10000);
 
-
     it("Set Minter" , async function(){
         const [account1 , account2] = await ethers.getSigners();
         await pick.setMinter(account2.address);
         expect(account2.address).to.equal(await pick.minter().then((ret)=>{return ret}));
     });
-
 
     it("mintTo" , async function(){
         const [account1 , account2] = await ethers.getSigners();
@@ -33,6 +31,8 @@ describe("Pick", function () {
         expect(await pick.balanceOf(account2.address).then((ret) => {return ret})).to.equal(mintNum);
     });
 
-
+    it("totalSupply" , async function(){
+        expect(await pick.totalSupply()).to.equal(100);
+    });
+    
 });
-
