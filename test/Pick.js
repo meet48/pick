@@ -10,7 +10,7 @@ describe("Pick", function () {
         return {pick};
     }
 
-    let pick;
+    let pick;   
     
     this.beforeAll(async function(){
         const contracts = await deploy();
@@ -35,4 +35,11 @@ describe("Pick", function () {
         expect(await pick.totalSupply()).to.equal(100);
     });
     
+    it("transfer" , async function(){
+        const [account1 , account2] = await ethers.getSigners();
+        await pick.mintTo(account1.address , 100);
+        await pick.transfer(account2.address , 10);
+        expect(await pick.balanceOf(account1.address).then((ret) => {return ret})).to.equal(90);
+    });
+
 });
