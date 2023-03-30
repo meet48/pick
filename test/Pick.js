@@ -48,6 +48,11 @@ describe("Pick", function () {
         expect(await pick.allowance(account1.address , account2.address).then((ret) => {return ret})).to.equal(100);
     });
 
+    it("decreaseAllowance" , async function(){
+        const [account1 , account2] = await ethers.getSigners();
+        await pick.decreaseAllowance(account2.address , 100);
+        expect(await pick.allowance(account1.address , account2.address).then((ret) => {return ret})).to.equal(0);
+    });
 
 
 
