@@ -52,30 +52,41 @@ contract Exchange is Ownable , Pausable {
         meetPriceRole = msg.sender;
     }
 
-    /**
-     * @dev init.
+        /**
+     * Initializes critical contract parameters (callable only by contract owner)
+     * @dev Performs safety checks and emits configuration events
+     * @param _ethPriceFeed Chainlink price feed address for ETH/USD conversions
+     * @param _meetPriceRole Address authorized for price adjustments
+     * @param _rewardPool Contract handling reward distribution
+     * @param _meetBurnFee Fee percentage (basis points) for token burns 
      */
     function init(
-        address _ethPriceFeed ,
-        address _meetPriceRole ,
-        address _rewardPool ,
+        address _ethPriceFeed,
+        address _meetPriceRole,
+        address _rewardPool,
         uint256 _meetBurnFee
-        ) external onlyOwner {
-
-        require(_ethPriceFeed != address(0) , "Exchange: zero address");
-        ethPriceFeed = AggregatorV3Interface(_ethPriceFeed);
-        emit SetEthPriceFeed(_ethPriceFeed);
-
-        require(_meetPriceRole != address(0) , "Exchange: zero address");
-        emit SetMeetPriceRole(meetPriceRole , meetPriceRole = _meetPriceRole);
-
-        require(_rewardPool != address(0) , "Exchange: zero address");
-        RewardPool = IRewardPool(_rewardPool);
+    ) external onlyOwner {  // Restrict to contract owner
+        // Validate and set ETH price feed (non-zero address check)
+        require(_ethPriceFeed != address(0), "Exchange: zero address");
+        ethPriceFeed = AggregatorV3Interface(_ethPriceFeed);  // Chainlink interface binding
+        emit SetEthPriceFeed(_ethPriceFeed);  // Log configuration change
+    
+        // Update price authority with dual-purpose emission pattern:
+        // 1. Emits old value before update
+        // 2. Updates storage variable via assignment in emit parameters
+        require(_meetPriceRole != address(0), "Exchange: zero address");
+        emit SetMeetPriceRole(meetPriceRole, meetPriceRole = _meetPriceRole);
+    
+        // Configure rewards pool contract 
+        require(_rewardPool != address(0), "Exchange: zero address");
+        RewardPool = IRewardPool(_rewardPool);  // Interface binding
         emit SetRewardPool(_rewardPool);
-
-        require(_meetBurnFee > 0 && _meetBurnFee < 10000 , "Exchange: Value out of range");
-        emit SetMeetBurnFee(meetBurnFee , meetBurnFee = _meetBurnFee);
-    }    
+    
+        // Validate fee percentage is 0 < fee < 100% (basis points format)
+        require(_meetBurnFee > 0 && _meetBurnFee < 10000, "Exchange: Value out of range");
+        // Emit before/after values using in-assignment update
+        emit SetMeetBurnFee(meetBurnFee, meetBurnFee = _meetBurnFee);
+    }   
 
     /**
      * @dev Set Chainlink eth price contract.
